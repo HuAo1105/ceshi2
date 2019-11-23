@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>sprend</title>
+    <style>
+        .sprend {
+            display: block;
+            position: relative;
+            width: 280px;
+            height: 72px;
+            margin: 100px auto;
+            font-family: Arial, Helvetica, sans-serif;
+            padding-bottom: 24px;
+            overflow: hidden;
+            border: 1px solid black;
+            transition: height .3s;
+            transform: translateZ(0);
+        }
+        .sprend-content {
+            text-align: center;
+            line-height: 24px;
+            font-size: 14px;
+        }
+        .sprend-arrow {
+            display: block;
+            width: 280px;
+            height: 24px;
+            position: absolute;
+            bottom: 0;
+            background: #ffffff;
+            text-align: center;
+            line-height: 24px;
+        }
+        .sprend-arrow-init {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-top: 1px solid #656565;
+            border-right: 1px solid #656565;
+            transform: rotate(-225deg);
+            -webkit-transform: rotate(-225deg);
+                transition: transform .3s;
+        }
+        .sprend-arrow-up {
+            transform: rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
+        }
+    </style>
+</head>
+<body>
+        <div class="sprend">
+            <div class="sprend-content">
+                关雎<br/>
+                先秦：佚名<br/>
+                关关雎鸠，在河之洲。窈窕淑女，君子好逑。<br/>
+                参差荇菜，左右流之。窈窕淑女，寤寐求之。<br/>
+                求之不得，寤寐思服。悠哉悠哉，辗转反侧。<br/>
+                参差荇菜，左右采之。窈窕淑女，琴瑟友之。<br/>
+            </div>
+            <div class="sprend-arrow">
+                    <span class="sprend-arrow-init"></span>
+            </div>
+        </div>
+</body>
+</html>
+<script src="g.js"></script>
+<script>
+    let initHeight = 72;
+    let handleSprendClassName = 'sprend-arrow-up';
+    let sprend = document.getElementsByClassName('sprend')[0];
+    let sprendContent = document.getElementsByClassName('sprend-content')[0];
+    let sprendArrow = document.getElementsByClassName('sprend-arrow')[0];
+    let overHeight = sprendContent.offsetHeight;
+
+    sprendArrow.onclick = function(event) {
+        let children = event.target.children[0];
+        let childrenClassName = children.className;
+        let isUp = childrenClassName.indexOf(handleSprendClassName) > -1;
+        if (isUp) {
+            children.className = 'sprend-arrow-init';
+            sprend.style = `height:${initHeight}px;`;
+        }
+        else {
+            children.className = `sprend-arrow-init ${handleSprendClassName}`;
+            sprend.style = `height:${overHeight}px;`;
+        }
+    }
+</script>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <canvas ref="warper" height="300px;"></canvas>
+    </div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</body>
+</html>
+<script>
+    let vm = new Vue({
+        el: '#app',
+        data: {
+            name: 'vue',
+            canvasArcData: {
+                x: 150,
+                y: 150,
+                r: 20,
+                itemArc: [
+                    {
+                        start: 90,
+                        end: 145,
+                        color :'green'
+                    }
+                ]
+            }
+        },
+        mounted() {
+            const canvas = this.$refs.warper;
+            this.ctx = canvas.getContext('2d');
+            this.canvasInit();
+        },
+        methods: {
+            canvasInit() {
+                const ctx = this.ctx;
+                ctx.beginPath();
+                ctx.arc(150, 150, 20, 0, 0.5 * Math.PI);
+                ctx.fillStyle = 'green';
+                ctx.closePath();
+                ctx.fill();
+            }
+        }
+    });
+</script>

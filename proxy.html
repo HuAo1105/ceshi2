@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>proxy</title>
+</head>
+<body>
+    <div id="app">
+        <input type="text" v-module="title" @input="onInput">
+        <p>{{ title }}</p>
+    </div>
+</body>
+</html>
+<script>
+    function myVue(obj) {
+        let el = obj.el || 'app';
+        let appBox = document.getElementById(el);
+        let methods = obj.methods;
+        let data = obj.data || {};
+        let vm = this;
+        this.data = data;
+        this.data = new Proxy(this.data, {
+            get: function(target, name) {
+                return name in target ? target[name] : undefined;
+            },
+            set: function(obj, prop, value) {
+                update(prop, value);
+                return value;
+            }
+        });
+        created();
+
+        function created() {
+            let childrens = Array.from(appBox.children);
+            childrens.forEach(item => {
+                let tagName = item.tagName;
+                if (tagName === 'INPUT') {
+                    let reg = /^v-on:|@(.+)$/;
+                    let attributes = Array.from(item.attributes);
+                    attributes.forEach(cur => {
+                        let name = cur.name;
+                        let moduleName = item.getAttribute('v-module');
+                        if (name === 'v-module') {
+                            item.value = data[moduleName];
+                        }
+                        else if (reg.test(name)) {
+                            let changeName = reg.exec(name)[1];
+                            let changeVaule = cur.value;
+                            item.addEventListener('input', methods[changeVaule].bind(vm, vm.data[moduleName]));
+                        }
+                    })
+
+                }
+                else {
+                    if (tagName === 'P') {
+                        let reg = /{{(.+)}}/;
+                        let innerHTML = item.innerHTML;
+                        if (reg.test(innerHTML)) {
+                            let name = reg.exec(innerHTML)[1].trim();
+                            item.setAttribute('v-text', name);
+                            let moduleName = item.getAttribute('v-text');
+                            item.innerHTML = data[moduleName];
+                        }
+                    }
+                }
+            });
+        }
+        function update(curName, curValue) {
+            let childrens = Array.from(appBox.children);
+            childrens.forEach(item => {
+                let tagName = item.tagName;
+                if (tagName === 'INPUT') {
+                    let moduleName = item.getAttribute('v-module');
+                    if (moduleName === curName) {
+                        item.value = curValue;
+                    }
+                }
+                else {
+                    if (tagName === 'P') {
+                        let moduleName = item.getAttribute('v-text');
+                        if (moduleName === curName) {
+                            item.innerHTML = curValue;
+                        }
+                    }
+                }
+            })
+        }
+        return this;
+    }
+    let vm = new myVue({
+        el: 'app',
+        data: {
+            title: 'Vue的双向数据绑定',
+            a: 0
+        },
+        methods: {
+            onInput(ev, e) {
+                let newVaule = e.target.value;
+                this.data.title = newVaule;
+            }
+        }
+    });
+
+</script>
